@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<meta name="robots" content="noindex">
+<style>*,*::before,*::after{box-sizing:border-box}html,body{height:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Herbst-Lesekarten</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,10 +31,33 @@ html, body { height: 100%; }
 body { background: var(--page); color: var(--ink); font-family: var(--read); }
 
 /* ---------- reading card ---------- */
-.card { position: fixed; inset: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;
+.card { position: relative; min-height: 100%; display: flex; align-items: center; justify-content: center;
   padding-block: calc(env(safe-area-inset-top, 0px) + 24px) calc(env(safe-area-inset-bottom, 0px) + 24px);
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+.card > .scene { position: fixed; }
+.ask { display: grid; gap: 12px; border-top: 2px dashed var(--lv-soft); padding-top: 18px; }
+.ask-h { margin: 0; font-size: clamp(17px, 4.2vw, 21px); font-weight: 700; line-height: 1.35; }
+.ask-h .slot { display: inline-grid; place-items: center; min-width: 1.7em; height: 1.7em; border-radius: 8px;
+  border: 2px solid var(--brown); margin: 0 2px; }
+.opts { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.opt { position: relative; display: grid; justify-items: center; align-content: end; gap: 6px; text-align: center;
+  background: #fff; border: 2px solid #EAD6B8; border-radius: 16px; padding: 10px 6px 12px;
+  font-size: clamp(15px, 3.8vw, 20px); font-weight: 700; overflow-wrap: anywhere; }
+.opt img { width: 100%; max-width: 110px; aspect-ratio: 1; object-fit: contain; }
+.opt .letter { display: grid; place-items: center; width: 2em; height: 2em; border-radius: 50%;
+  background: var(--brown); color: #fff; font-size: 1.1em; }
+.lv2 .opts, .lv3 .opts { grid-template-columns: 1fr; }
+.lv2 .opt, .lv3 .opt { grid-template-columns: 1fr auto; justify-items: start; align-items: center; text-align: left;
+  padding: 10px 12px 10px 18px; }
+.stmt { display: grid; gap: 10px; background: #F8E6DE; border-radius: 16px; padding: 14px 16px; }
+.stmt p { margin: 0; font-size: clamp(16px, 4vw, 20px); line-height: 1.4; }
+.stmt .tf { display: flex; gap: 10px; flex-wrap: wrap; }
+.stmt .tf span { background: #fff; border-radius: 12px; padding: 6px 12px; font-weight: 700; }
+.start { min-height: 100%; display: grid; place-items: center; text-align: center; padding-block: 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.start h1 { font-size: clamp(30px, 7vw, 46px); margin: 0 0 12px; }
+.start p { font-size: 20px; line-height: 1.5; margin: 0; }
 .panel { position: relative; max-width: 34rem; width: 100%; background: color-mix(in srgb, var(--paper) 94%, transparent);
   border-radius: 28px; padding: clamp(22px, 5vw, 40px); box-shadow: 0 12px 40px rgba(40, 20, 5, .35);
   border: 3px solid #F1D6AE; display: grid; gap: 22px; }
@@ -90,224 +114,7 @@ body { background: var(--page); color: var(--ink); font-family: var(--read); }
 
 <script>
 // Each entry: the card it is printed on (by picture), its text, and the scene behind the text.
-const CARDS = [
- {
-  "on": "Igel",
-  "answer": "Eichhörnchen",
-  "scene": "baeume",
-  "t": {
-   "1": [
-    "Ich bin rot.",
-    "Ich ha·be ei·nen di·cken Schwanz.",
-    "Ich mag Nüs·se.",
-    "Wer bin ich?"
-   ],
-   "2": [
-    "Ich habe ein rotes Fell und einen buschigen Schwanz.",
-    "Ich klettere flink auf Bäume.",
-    "Im Herbst verstecke ich Nüsse im Boden.",
-    "Wer bin ich?"
-   ],
-   "3": [
-    "Ich wohne hoch oben in den Bäumen.",
-    "Mein Fell ist rotbraun und an den Ohren habe ich kleine Pinsel.",
-    "Im Herbst sammle ich Nüsse und Eicheln und vergrabe sie im Boden.",
-    "Im Winter suche ich meine Vorräte wieder, aber ich finde nicht alle.",
-    "Aus den vergessenen Nüssen wachsen manchmal neue Bäume.",
-    "Wer bin ich?"
-   ]
-  }
- },
- {
-  "on": "Eichhörnchen",
-  "answer": "Drachen",
-  "scene": "wind",
-  "t": {
-   "1": [
-    "Der Wind weht.",
-    "Ich flie·ge hoch.",
-    "Ich bin bunt.",
-    "Ich hän·ge an ei·ner Schnur.",
-    "Was bin ich?"
-   ],
-   "2": [
-    "Der Wind weht kräftig.",
-    "Mia läuft über das Feld.",
-    "Sie hält eine lange Schnur fest.",
-    "Oben am Himmel fliegt etwas Buntes mit einem langen Schwanz.",
-    "Was ist das?"
-   ],
-   "3": [
-    "Heute ist der Wind besonders stark.",
-    "Opa und Mia gehen auf das Stoppelfeld hinter dem Dorf.",
-    "Mia rennt los und lässt die Schnur langsam locker.",
-    "Plötzlich steigt etwas Buntes in den Himmel und tanzt hin und her.",
-    "Sein langer Schwanz mit den kleinen Schleifen flattert im Wind.",
-    "Was lässt Mia steigen?"
-   ]
-  }
- },
- {
-  "on": "Drachen",
-  "answer": "Kürbis",
-  "scene": "feld",
-  "t": {
-   "1": [
-    "Ich bin rund.",
-    "Ich bin o·ran·ge.",
-    "Ich wach·se auf dem Feld.",
-    "Wer bin ich?"
-   ],
-   "2": [
-    "Ich bin rund, dick und orange.",
-    "Ich wachse auf dem Feld.",
-    "Aus mir kann man Suppe kochen.",
-    "Man kann mir auch ein Gesicht schnitzen.",
-    "Wer bin ich?"
-   ],
-   "3": [
-    "Im Frühling war ich nur ein kleiner Kern in der Erde.",
-    "Den ganzen Sommer bin ich auf dem Feld gewachsen und immer dicker geworden.",
-    "Jetzt bin ich rund, schwer und leuchtend orange.",
-    "Manche Leute kochen aus mir eine leckere Suppe.",
-    "Andere schnitzen mir ein lustiges Gesicht und stellen eine Kerze in mich hinein.",
-    "Wer bin ich?"
-   ]
-  }
- },
- {
-  "on": "Kürbis",
-  "answer": "Pilz",
-  "scene": "wald",
-  "t": {
-   "1": [
-    "Ich woh·ne im Wald.",
-    "Ich ha·be ei·nen ro·ten Hut mit wei·ßen Punk·ten.",
-    "Wer bin ich?"
-   ],
-   "2": [
-    "Ich wohne im Wald.",
-    "Ich habe einen Hut, aber keinen Kopf.",
-    "Ich stehe nur auf einem Bein.",
-    "Ich bin rot mit weißen Punkten.",
-    "Wer bin ich?"
-   ],
-   "3": [
-    "Nach einem warmen Regen wachse ich im Herbstwald aus dem Boden.",
-    "Ich habe einen Hut, aber keinen Kopf, und ich stehe auf nur einem Bein.",
-    "Mein Hut ist rot und hat weiße Tupfen.",
-    "Ich sehe hübsch aus, aber du darfst mich auf keinen Fall essen, denn ich bin giftig.",
-    "Wer bin ich?"
-   ]
-  }
- },
- {
-  "on": "Pilz",
-  "answer": "Regenschirm",
-  "scene": "regen",
-  "t": {
-   "1": [
-    "Es reg·net.",
-    "Tim will nicht nass wer·den.",
-    "Was nimmt er mit?"
-   ],
-   "2": [
-    "Draußen regnet es stark.",
-    "Tim möchte trocken zur Schule kommen.",
-    "Er spannt etwas Blaues über seinen Kopf.",
-    "Was ist das?"
-   ],
-   "3": [
-    "Am Morgen schaut Tim aus dem Fenster.",
-    "Dicke graue Wolken hängen am Himmel und der Regen prasselt gegen die Scheibe.",
-    "Tim zieht seine Gummistiefel und seine Regenjacke an.",
-    "Aber sein Kopf soll auch trocken bleiben.",
-    "Darum nimmt er etwas mit, das er über sich aufspannen kann.",
-    "Was ist das?"
-   ]
-  }
- },
- {
-  "on": "Regenschirm",
-  "answer": "Laterne",
-  "scene": "nacht",
-  "t": {
-   "1": [
-    "Es ist dun·kel.",
-    "Die Kin·der sin·gen.",
-    "Sie tra·gen ein bun·tes Licht.",
-    "Was ist das?"
-   ],
-   "2": [
-    "Es ist ein Abend im November.",
-    "Draußen ist es schon dunkel.",
-    "Die Kinder singen Lieder.",
-    "Jedes Kind trägt ein buntes Licht an einem Stab.",
-    "Was ist das?"
-   ],
-   "3": [
-    "Am 11.",
-    "November feiern viele Kinder das Martinsfest.",
-    "Wenn es draußen dunkel wird, ziehen sie gemeinsam durch die Straßen und singen Lieder.",
-    "Jedes Kind hält einen Stab in der Hand.",
-    "Daran hängt etwas Rundes aus buntem Papier, in dem ein kleines Licht leuchtet.",
-    "Viele Kinder haben es in der Schule selbst gebastelt.",
-    "Was ist das?"
-   ]
-  }
- },
- {
-  "on": "Laterne",
-  "answer": "Blätter",
-  "scene": "laub",
-  "t": {
-   "1": [
-    "Sie sind gelb, rot und braun.",
-    "Sie fal·len vom Baum.",
-    "Was ist das?"
-   ],
-   "2": [
-    "Die Blätter an den Bäumen werden gelb, rot und braun.",
-    "Dann fallen sie herunter.",
-    "Sie rascheln unter deinen Füßen.",
-    "Was ist das?"
-   ],
-   "3": [
-    "Im Sommer sind sie grün und hängen hoch oben an den Ästen.",
-    "Wenn es kühler wird, färben sie sich gelb, rot und braun.",
-    "Dann löst der Wind sie von den Zweigen und sie segeln langsam zu Boden.",
-    "Wenn du durch den Park gehst, rascheln sie laut unter deinen Füßen.",
-    "Was ist das?"
-   ]
-  }
- },
- {
-  "on": "Blätter",
-  "answer": "Igel",
-  "scene": "garten",
-  "t": {
-   "1": [
-    "Ich ha·be vie·le Sta·cheln.",
-    "Ich schla·fe im Win·ter.",
-    "Wer bin ich?"
-   ],
-   "2": [
-    "Ich habe viele Stacheln auf dem Rücken.",
-    "Im Herbst baue ich mir ein Nest aus Laub.",
-    "Dann schlafe ich den ganzen Winter.",
-    "Wer bin ich?"
-   ],
-   "3": [
-    "Ich bin ein kleines Tier und habe auf dem Rücken viele spitze Stacheln.",
-    "Wenn ich Angst habe, rolle ich mich zu einer Kugel zusammen.",
-    "Nachts suche ich im Garten nach Käfern und Schnecken.",
-    "Im Herbst baue ich mir unter einem Laubhaufen ein warmes Nest.",
-    "Dort schlafe ich bis zum Frühling.",
-    "Wer bin ich?"
-   ]
-  }
- }
-];
+const CARDS = [{"on": "Igel", "answer": "Eichhörnchen", "scene": "baeume", "t": {"1": ["Ich bin rot.", "Ich ha·be ei·nen di·cken Schwanz.", "Ich mag Nüs·se.", "Wer bin ich?"], "2": ["Ich habe ein rotes Fell und einen buschigen Schwanz.", "Ich klettere flink auf Bäume.", "Im Herbst verstecke ich Nüsse im Boden.", "Wer bin ich?"], "3": ["Ich wohne hoch oben in den Bäumen.", "Mein Fell ist rotbraun und an den Ohren habe ich kleine Pinsel.", "Im Herbst sammle ich Nüsse und Eicheln und vergrabe sie im Boden.", "Im Winter suche ich meine Vorräte wieder, aber ich finde nicht alle.", "Aus den vergessenen Nüssen wachsen manchmal neue Bäume.", "Wer bin ich?"]}, "slot": 1, "q": {"1": [{"label": "Eichhörnchen", "img": "eichhoernchen", "letter": "K"}, {"label": "Kastanie", "img": "kastanie", "letter": "H"}, {"label": "Igel", "img": "igel", "letter": "W"}], "2": [{"label": "Eichhörnchen", "img": null, "letter": "K"}, {"label": "Maus", "img": null, "letter": "O"}, {"label": "Fuchs", "img": null, "letter": "U"}], "3": [{"label": "Eichhörnchen", "img": null, "letter": "K"}, {"label": "Siebenschläfer", "img": null, "letter": "U"}, {"label": "Baummarder", "img": null, "letter": "W"}]}, "stmt": {"text": "Das Eichhörnchen findet im Winter alle seine Nüsse wieder.", "truth": false, "richtig": "K", "falsch": "N"}}, {"on": "Eichhörnchen", "answer": "Drachen", "scene": "wind", "t": {"1": ["Der Wind weht.", "Ich flie·ge hoch.", "Ich bin bunt.", "Ich hän·ge an ei·ner Schnur.", "Was bin ich?"], "2": ["Der Wind weht kräftig.", "Mia läuft über das Feld.", "Sie hält eine lange Schnur fest.", "Oben am Himmel fliegt etwas Buntes mit einem langen Schwanz.", "Was ist das?"], "3": ["Heute ist der Wind besonders stark.", "Opa und Mia gehen auf das Stoppelfeld hinter dem Dorf.", "Mia rennt los und lässt die Schnur langsam locker.", "Plötzlich steigt etwas Buntes in den Himmel und tanzt hin und her.", "Sein langer Schwanz mit den kleinen Schleifen flattert im Wind.", "Was lässt Mia steigen?"]}, "slot": 2, "q": {"1": [{"label": "Blätter", "img": "blaetter", "letter": "O"}, {"label": "Regenschirm", "img": "regenschirm", "letter": "G"}, {"label": "Drachen", "img": "drachen", "letter": "A"}], "2": [{"label": "Vogel", "img": null, "letter": "G"}, {"label": "Drachen", "img": null, "letter": "A"}, {"label": "Luftballon", "img": null, "letter": "P"}], "3": [{"label": "Windrad", "img": null, "letter": "Z"}, {"label": "Drachen", "img": null, "letter": "A"}, {"label": "Luftballon", "img": null, "letter": "O"}]}, "stmt": {"text": "Mia und Opa gehen auf ein Stoppelfeld.", "truth": true, "richtig": "E", "falsch": "M"}}, {"on": "Drachen", "answer": "Kürbis", "scene": "feld", "t": {"1": ["Ich bin rund.", "Ich bin o·ran·ge.", "Ich wach·se auf dem Feld.", "Wer bin ich?"], "2": ["Ich bin rund, dick und orange.", "Ich wachse auf dem Feld.", "Aus mir kann man Suppe kochen.", "Man kann mir auch ein Gesicht schnitzen.", "Wer bin ich?"], "3": ["Im Frühling war ich nur ein kleiner Kern in der Erde.", "Den ganzen Sommer bin ich auf dem Feld gewachsen und immer dicker geworden.", "Jetzt bin ich rund, schwer und leuchtend orange.", "Manche Leute kochen aus mir eine leckere Suppe.", "Andere schnitzen mir ein lustiges Gesicht und stellen eine Kerze in mich hinein.", "Wer bin ich?"]}, "slot": 3, "q": {"1": [{"label": "Kürbis", "img": "kuerbis", "letter": "S"}, {"label": "Pilz", "img": "pilz", "letter": "W"}, {"label": "Kastanie", "img": "kastanie", "letter": "H"}], "2": [{"label": "Kartoffel", "img": null, "letter": "F"}, {"label": "Kürbis", "img": null, "letter": "S"}, {"label": "Apfel", "img": null, "letter": "H"}], "3": [{"label": "Kürbis", "img": null, "letter": "S"}, {"label": "Orange", "img": null, "letter": "G"}, {"label": "Melone", "img": null, "letter": "Z"}]}, "stmt": {"text": "Im Frühling war der Kürbis schon groß und orange.", "truth": false, "richtig": "I", "falsch": "B"}}, {"on": "Kürbis", "answer": "Pilz", "scene": "wald", "t": {"1": ["Ich woh·ne im Wald.", "Ich ha·be ei·nen ro·ten Hut mit wei·ßen Punk·ten.", "Wer bin ich?"], "2": ["Ich wohne im Wald.", "Ich habe einen Hut, aber keinen Kopf.", "Ich stehe nur auf einem Bein.", "Ich bin rot mit weißen Punkten.", "Wer bin ich?"], "3": ["Nach einem warmen Regen wachse ich im Herbstwald aus dem Boden.", "Ich habe einen Hut, aber keinen Kopf, und ich stehe auf nur einem Bein.", "Mein Hut ist rot und hat weiße Tupfen.", "Ich sehe hübsch aus, aber du darfst mich auf keinen Fall essen, denn ich bin giftig.", "Wer bin ich?"]}, "slot": 4, "q": {"1": [{"label": "Pilz", "img": "pilz", "letter": "T"}, {"label": "Laterne", "img": "laterne", "letter": "M"}, {"label": "Kürbis", "img": "kuerbis", "letter": "L"}], "2": [{"label": "Blume", "img": null, "letter": "L"}, {"label": "Baum", "img": null, "letter": "Z"}, {"label": "Pilz", "img": null, "letter": "T"}], "3": [{"label": "Fliegenpilz", "img": null, "letter": "T"}, {"label": "Steinpilz", "img": null, "letter": "B"}, {"label": "Erdbeere", "img": null, "letter": "W"}]}, "stmt": {"text": "Diesen Pilz darf man essen.", "truth": false, "richtig": "K", "falsch": "E"}}, {"on": "Pilz", "answer": "Regenschirm", "scene": "regen", "t": {"1": ["Es reg·net.", "Tim will nicht nass wer·den.", "Was nimmt er mit?"], "2": ["Draußen regnet es stark.", "Tim möchte trocken zur Schule kommen.", "Er spannt etwas Blaues über seinen Kopf.", "Was ist das?"], "3": ["Am Morgen schaut Tim aus dem Fenster.", "Dicke graue Wolken hängen am Himmel und der Regen prasselt gegen die Scheibe.", "Tim zieht seine Gummistiefel und seine Regenjacke an.", "Aber sein Kopf soll auch trocken bleiben.", "Darum nimmt er etwas mit, das er über sich aufspannen kann.", "Was ist das?"]}, "slot": 5, "q": {"1": [{"label": "Drachen", "img": "drachen", "letter": "H"}, {"label": "Regenschirm", "img": "regenschirm", "letter": "A"}, {"label": "Laterne", "img": "laterne", "letter": "D"}], "2": [{"label": "Sonnenbrille", "img": null, "letter": "W"}, {"label": "Regenschirm", "img": null, "letter": "A"}, {"label": "Mütze", "img": null, "letter": "U"}], "3": [{"label": "Gummistiefel", "img": null, "letter": "M"}, {"label": "Regenschirm", "img": null, "letter": "A"}, {"label": "Regenjacke", "img": null, "letter": "Z"}]}, "stmt": {"text": "Tim zieht Gummistiefel an.", "truth": true, "richtig": "L", "falsch": "R"}}, {"on": "Regenschirm", "answer": "Laterne", "scene": "nacht", "t": {"1": ["Es ist dun·kel.", "Die Kin·der sin·gen.", "Sie tra·gen ein bun·tes Licht.", "Was ist das?"], "2": ["Es ist ein Abend im November.", "Draußen ist es schon dunkel.", "Die Kinder singen Lieder.", "Jedes Kind trägt ein buntes Licht an einem Stab.", "Was ist das?"], "3": ["Am 11.", "November feiern viele Kinder das Martinsfest.", "Wenn es draußen dunkel wird, ziehen sie gemeinsam durch die Straßen und singen Lieder.", "Jedes Kind hält einen Stab in der Hand.", "Daran hängt etwas Rundes aus buntem Papier, in dem ein kleines Licht leuchtet.", "Viele Kinder haben es in der Schule selbst gebastelt.", "Was ist das?"]}, "slot": 6, "q": {"1": [{"label": "Drachen", "img": "drachen", "letter": "H"}, {"label": "Kürbis", "img": "kuerbis", "letter": "G"}, {"label": "Laterne", "img": "laterne", "letter": "N"}], "2": [{"label": "Laterne", "img": null, "letter": "N"}, {"label": "Taschenlampe", "img": null, "letter": "F"}, {"label": "Kerze", "img": null, "letter": "L"}], "3": [{"label": "Taschenlampe", "img": null, "letter": "H"}, {"label": "Laterne", "img": null, "letter": "N"}, {"label": "Fackel", "img": null, "letter": "D"}]}, "stmt": {"text": "Das Martinsfest ist im Sommer.", "truth": false, "richtig": "I", "falsch": "T"}}, {"on": "Laterne", "answer": "Blätter", "scene": "laub", "t": {"1": ["Sie sind gelb, rot und braun.", "Sie fal·len vom Baum.", "Was ist das?"], "2": ["Die Blätter an den Bäumen werden gelb, rot und braun.", "Dann fallen sie herunter.", "Sie rascheln unter deinen Füßen.", "Was ist das?"], "3": ["Im Sommer sind sie grün und hängen hoch oben an den Ästen.", "Wenn es kühler wird, färben sie sich gelb, rot und braun.", "Dann löst der Wind sie von den Zweigen und sie segeln langsam zu Boden.", "Wenn du durch den Park gehst, rascheln sie laut unter deinen Füßen.", "Was ist das?"]}, "slot": 7, "q": {"1": [{"label": "Regenschirm", "img": "regenschirm", "letter": "U"}, {"label": "Blätter", "img": "blaetter", "letter": "I"}, {"label": "Pilz", "img": "pilz", "letter": "G"}], "2": [{"label": "Blätter", "img": null, "letter": "I"}, {"label": "Schneeflocken", "img": null, "letter": "F"}, {"label": "Blumen", "img": null, "letter": "D"}], "3": [{"label": "Schneeflocken", "img": null, "letter": "B"}, {"label": "Blätter", "img": null, "letter": "I"}, {"label": "Äpfel", "img": null, "letter": "R"}]}, "stmt": {"text": "Im Sommer sind die Blätter grün.", "truth": true, "richtig": "A", "falsch": "I"}}, {"on": "Blätter", "answer": "Igel", "scene": "garten", "t": {"1": ["Ich ha·be vie·le Sta·cheln.", "Ich schla·fe im Win·ter.", "Wer bin ich?"], "2": ["Ich habe viele Stacheln auf dem Rücken.", "Im Herbst baue ich mir ein Nest aus Laub.", "Dann schlafe ich den ganzen Winter.", "Wer bin ich?"], "3": ["Ich bin ein kleines Tier und habe auf dem Rücken viele spitze Stacheln.", "Wenn ich Angst habe, rolle ich mich zu einer Kugel zusammen.", "Nachts suche ich im Garten nach Käfern und Schnecken.", "Im Herbst baue ich mir unter einem Laubhaufen ein warmes Nest.", "Dort schlafe ich bis zum Frühling.", "Wer bin ich?"]}, "slot": 8, "q": {"1": [{"label": "Kastanie", "img": "kastanie", "letter": "W"}, {"label": "Eichhörnchen", "img": "eichhoernchen", "letter": "M"}, {"label": "Igel", "img": "igel", "letter": "E"}], "2": [{"label": "Schnecke", "img": null, "letter": "F"}, {"label": "Maus", "img": null, "letter": "Z"}, {"label": "Igel", "img": null, "letter": "E"}], "3": [{"label": "Siebenschläfer", "img": null, "letter": "M"}, {"label": "Igel", "img": null, "letter": "E"}, {"label": "Maus", "img": null, "letter": "B"}]}, "stmt": {"text": "Der Igel sucht am Tag nach Käfern und Schnecken.", "truth": false, "richtig": "K", "falsch": "G"}}];
 
 // ---------- tiny SVG helpers (scene viewBox 400 x 800, sliced to cover) ----------
 const LEAF_COLS = ["#E07A1F", "#B5452B", "#E3B23C", "#C8562B", "#D99A2B"];
@@ -452,17 +259,29 @@ function renderCard(i, lv) {
     <article class="panel" style="--lv-soft:var(--lv${lv}-soft)">
       <div class="head"><span class="chip">Herbst-Lesespur</span>${badge(lv)}</div>
       <div class="text">${lines.map((t, j) => `<p class="${j === lines.length - 1 ? "q" : ""}">${t}</p>`).join("")}</div>
-      <div class="hint">${lens}<span>Suche die Karte mit dem passenden Bild!</span></div>
+      <div class="ask">
+        <p class="ask-h">${lv === 1 ? "Was ist richtig?" : "Welche Antwort stimmt?"} Schreibe den Buchstaben in Kästchen <span class="slot">${c.slot}</span>.</p>
+        <div class="opts">${c.q[lv].map(o => `<div class="opt">${o.img ? `<img src="img/${o.img}.png" alt="">` : ""}<span>${o.label}</span><span class="letter">${o.letter}</span></div>`).join("")}</div>
+      </div>
+      ${lv === 3 ? `<div class="stmt"><p><b>Extra-Wort:</b> Stimmt dieser Satz?</p><p>„${c.stmt.text}“</p>
+        <div class="tf"><span>richtig → ${c.stmt.richtig}</span><span>falsch → ${c.stmt.falsch}</span></div>
+        <p>Schreibe den Buchstaben in Kästchen <b>${c.slot}</b> vom Extra-Wort.</p></div>` : ""}
+      <div class="hint">${lens}<span>Suche die Karte mit dem richtigen Bild. Dort geht es weiter!</span></div>
     </article></main>`;
+}
+
+function renderStart() {
+  app.innerHTML = `<main class="start"><div><h1>Herbst-Lesespur</h1>
+    <p>Scanne einen QR-Code auf einer Bildkarte.<br>Dann erscheint hier dein Text.</p></div></main>`;
 }
 
 function renderOverview() {
   app.innerHTML = `<div class="overview">
     <h1>Herbst-Lesekarten</h1>
-    <p>Das sind die Leseseiten der Herbst-Lesespur in drei Stufen. Die Kinder kommen über die QR-Codes auf den Bildkarten direkt zu ihrer Seite. In Stufe 1 sind die Silben farbig. Tippe auf eine Karte, um sie groß anzusehen.</p>
+    <p>Übersicht für die Lehrkraft: alle Leseseiten in drei Stufen. Die Kinder kommen über die QR-Codes auf den Bildkarten direkt zu ihrer Seite. Lösungswort: KASTANIE, Extra-Wort in Stufe 3: NEBELTAG.</p>
     ${[1, 2, 3].map(lv => `<h2 class="level">${badge(lv)}</h2>
     <div class="grid">${CARDS.map((c, i) => `<a class="thumb" href="#s${lv}-${i + 1}">${sceneSVG(c.scene, `o${lv}${i}`)}
-      <span class="lbl"><b>QR auf Karte „${c.on}“</b>Lösung: ${c.answer}</span></a>`).join("")}</div>`).join("")}</div>`;
+      <span class="lbl"><b>QR auf Karte „${c.on}“</b>Lösung: ${c.answer} → ${c.q[lv].find(o => o.letter && (o.label === c.answer || o.label === "Fliegenpilz") ).letter} (Nr. ${c.slot})</span></a>`).join("")}</div>`).join("")}</div>`;
 }
 
 function route() {
@@ -470,7 +289,8 @@ function route() {
   let m = /^#s([1-3])-([1-8])$/.exec(h);
   if (m) renderCard(+m[2] - 1, +m[1]);
   else if ((m = /^#text-([1-8])$/.exec(h))) renderCard(+m[1] - 1, 2);
-  else renderOverview();
+  else if (h === "#lehrkraft") renderOverview();
+  else renderStart();
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
