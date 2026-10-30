@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Herbst-Lesekarten</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap">
+<style>
+/* Layout: one full-screen illustrated scene per reading card, text on a paper panel; overview grid without hash.
+   Deliberately single-look (illustrated, light paper panels), so every colour is set explicitly. */
+:root {
+  --paper: #FFF8EC;
+  --ink: #3B2A1E;
+  --orange: #E07A1F;
+  --rust: #B5452B;
+  --brown: #7A4B2A;
+  --page: #F3E3C8;
+  --syl-a: #1F5FB0;
+  --syl-b: #C0281E;
+  --lv1: #B8870F; --lv1-soft: #F2DC9C;
+  --lv2: #D86A16; --lv2-soft: #F4C9A0;
+  --lv3: #A63E26; --lv3-soft: #E7B6A8;
+  --read: "Andika", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body { background: var(--page); color: var(--ink); font-family: var(--read); }
+
+/* ---------- reading card ---------- */
+.card { position: fixed; inset: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  padding-block: calc(env(safe-area-inset-top, 0px) + 24px) calc(env(safe-area-inset-bottom, 0px) + 24px);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+.panel { position: relative; max-width: 34rem; width: 100%; background: color-mix(in srgb, var(--paper) 94%, transparent);
+  border-radius: 28px; padding: clamp(22px, 5vw, 40px); box-shadow: 0 12px 40px rgba(40, 20, 5, .35);
+  border: 3px solid #F1D6AE; display: grid; gap: 22px; }
+.chip { justify-self: start; font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--rust); }
+.text { display: grid; gap: .55em; font-size: clamp(22px, 5.4vw, 34px); line-height: 1.45; }
+.text p { margin: 0; }
+.text p.q { font-weight: 700; color: var(--rust); }
+.lv1 .text { font-size: clamp(26px, 6.6vw, 40px); line-height: 1.5; gap: .45em; }
+.lv3 .text { font-size: clamp(19px, 4.4vw, 27px); line-height: 1.55; gap: .5em; }
+.syl-a { color: var(--syl-a); }
+.syl-b { color: var(--syl-b); }
+.lv1 .text p.q { color: var(--ink); }
+.head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 5px 12px 5px 14px;
+  font-weight: 700; font-size: 15px; color: #fff; background: var(--lv); }
+.badge svg { width: 16px; height: 22px; }
+.panel { border-color: var(--lv-soft); }
+.hint { display: flex; gap: 14px; align-items: center; background: var(--orange); color: #fff; border-radius: 18px;
+  padding: 14px 18px; font-size: clamp(17px, 4.2vw, 22px); font-weight: 700; line-height: 1.3; }
+.hint svg { flex: none; width: 34px; height: 34px; }
+
+/* ---------- overview ---------- */
+.overview { max-width: 64rem; margin: 0 auto; padding-block: 32px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.overview h1 { font-size: clamp(30px, 6vw, 44px); margin: 0 0 8px; text-wrap: balance; }
+.overview > p { font-size: 17px; line-height: 1.55; max-width: 40rem; margin: 0 0 28px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+.thumb { position: relative; display: block; aspect-ratio: 3 / 4; max-width: 100%; border-radius: 18px; overflow: hidden;
+  text-decoration: none; color: var(--ink); box-shadow: 0 4px 14px rgba(60, 30, 10, .18); }
+.thumb:focus-visible { outline: 4px solid var(--orange); outline-offset: 3px; }
+.thumb .lbl { position: absolute; left: 10px; right: 10px; bottom: 10px; background: var(--paper); border-radius: 12px;
+  padding: 10px 12px; font-size: 15px; line-height: 1.35; }
+.thumb .lbl b { display: block; color: var(--rust); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+.level { margin: 36px 0 14px; display: flex; align-items: center; gap: 10px; font-size: 22px; }
+.level .badge { font-size: 16px; }
+
+/* ---------- motion ---------- */
+.fall { animation: fall linear infinite; transform-box: fill-box; }
+@keyframes fall { from { transform: translate(0, -120px) rotate(0deg); } to { transform: translate(40px, 900px) rotate(320deg); } }
+.drop { animation: rain .9s linear infinite; }
+@keyframes rain { from { transform: translate(0, -60px); } to { transform: translate(-20px, 860px); } }
+.twinkle { animation: tw 2.4s ease-in-out infinite alternate; }
+@keyframes tw { from { opacity: .35; } to { opacity: 1; } }
+.drift { animation: drift 9s ease-in-out infinite alternate; }
+@keyframes drift { from { transform: translateX(-20px); } to { transform: translateX(30px); } }
+@media (prefers-reduced-motion: reduce) { .fall, .drop, .twinkle, .drift { animation: none; } }
+</style>
+</head>
+<body>
+
+
+<div id="app"></div>
+
+<script>
+// Each entry: the card it is printed on (by picture), its text, and the scene behind the text.
+const CARDS = [
+ {
+  "on": "Igel",
+  "answer": "Eichhörnchen",
+  "scene": "baeume",
+  "t": {
+   "1": [
+    "Ich bin rot.",
+    "Ich ha·be ei·nen di·cken Schwanz.",
+    "Ich mag Nüs·se.",
+    "Wer bin ich?"
+   ],
+   "2": [
+    "Ich habe ein rotes Fell und einen buschigen Schwanz.",
+    "Ich klettere flink auf Bäume.",
+    "Im Herbst verstecke ich Nüsse im Boden.",
+    "Wer bin ich?"
+   ],
+   "3": [
+    "Ich wohne hoch oben in den Bäumen.",
+    "Mein Fell ist rotbraun und an den Ohren habe ich kleine Pinsel.",
+    "Im Herbst sammle ich Nüsse und Eicheln und vergrabe sie im Boden.",
+    "Im Winter suche ich meine Vorräte wieder, aber ich finde nicht alle.",
+    "Aus den vergessenen Nüssen wachsen manchmal neue Bäume.",
+    "Wer bin ich?"
+   ]
+  }
+ },
+ {
+  "on": "Eichhörnchen",
+  "answer": "Drachen",
+  "scene": "wind",
+  "t": {
+   "1": [
+    "Der Wind weht.",
+    "Ich flie·ge hoch.",
+    "Ich bin bunt.",
+    "Ich hän·ge an ei·ner Schnur.",
+    "Was bin ich?"
+   ],
+   "2": [
+    "Der Wind weht kräftig.",
+    "Mia läuft über das Feld.",
+    "Sie hält eine lange Schnur fest.",
+    "Oben am Himmel fliegt etwas Buntes mit einem langen Schwanz.",
+    "Was ist das?"
+   ],
+   "3": [
+    "Heute ist der Wind besonders stark.",
+    "Opa und Mia gehen auf das Stoppelfeld hinter dem Dorf.",
+    "Mia rennt los und lässt die Schnur langsam locker.",
+    "Plötzlich steigt etwas Buntes in den Himmel und tanzt hin und her.",
+    "Sein langer Schwanz mit den kleinen Schleifen flattert im Wind.",
+    "Was lässt Mia steigen?"
+   ]
+  }
+ },
+ {
+  "on": "Drachen",
+  "answer": "Kürbis",
+  "scene": "feld",
+  "t": {
+   "1": [
+    "Ich bin rund.",
+    "Ich bin o·ran·ge.",
+    "Ich wach·se auf dem Feld.",
+    "Wer bin ich?"
+   ],
+   "2": [
+    "Ich bin rund, dick und orange.",
+    "Ich wachse auf dem Feld.",
+    "Aus mir kann man Suppe kochen.",
+    "Man kann mir auch ein Gesicht schnitzen.",
+    "Wer bin ich?"
+   ],
+   "3": [
+    "Im Frühling war ich nur ein kleiner Kern in der Erde.",
+    "Den ganzen Sommer bin ich auf dem Feld gewachsen und immer dicker geworden.",
+    "Jetzt bin ich rund, schwer und leuchtend orange.",
+    "Manche Leute kochen aus mir eine leckere Suppe.",
+    "Andere schnitzen mir ein lustiges Gesicht und stellen eine Kerze in mich hinein.",
+    "Wer bin ich?"
+   ]
+  }
+ },
+ {
+  "on": "Kürbis",
+  "answer": "Pilz",
+  "scene": "wald",
+  "t": {
+   "1": [
+    "Ich woh·ne im Wald.",
+    "Ich ha·be ei·nen ro·ten Hut mit wei·ßen Punk·ten.",
+    "Wer bin ich?"
+   ],
+   "2": [
+    "Ich wohne im Wald.",
+    "Ich habe einen Hut, aber keinen Kopf.",
+    "Ich stehe nur auf einem Bein.",
+    "Ich bin rot mit weißen Punkten.",
+    "Wer bin ich?"
+   ],
+   "3": [
+    "Nach einem warmen Regen wachse ich im Herbstwald aus dem Boden.",
+    "Ich habe einen Hut, aber keinen Kopf, und ich stehe auf nur einem Bein.",
+    "Mein Hut ist rot und hat weiße Tupfen.",
+    "Ich sehe hübsch aus, aber du darfst mich auf keinen Fall essen, denn ich bin giftig.",
+    "Wer bin ich?"
+   ]
+  }
+ },
+ {
+  "on": "Pilz",
+  "answer": "Regenschirm",
+  "scene": "regen",
+  "t": {
+   "1": [
+    "Es reg·net.",
+    "Tim will nicht nass wer·den.",
+    "Was nimmt er mit?"
+   ],
+   "2": [
+    "Draußen regnet es stark.",
+    "Tim möchte trocken zur Schule kommen.",
+    "Er spannt etwas Blaues über seinen Kopf.",
+    "Was ist das?"
+   ],
+   "3": [
+    "Am Morgen schaut Tim aus dem Fenster.",
+    "Dicke graue Wolken hängen am Himmel und der Regen prasselt gegen die Scheibe.",
+    "Tim zieht seine Gummistiefel und seine Regenjacke an.",
+    "Aber sein Kopf soll auch trocken bleiben.",
+    "Darum nimmt er etwas mit, das er über sich aufspannen kann.",
+    "Was ist das?"
+   ]
+  }
+ },
+ {
+  "on": "Regenschirm",
+  "answer": "Laterne",
+  "scene": "nacht",
+  "t": {
+   "1": [
+    "Es ist dun·kel.",
+    "Die Kin·der sin·gen.",
+    "Sie tra·gen ein bun·tes Licht.",
+    "Was ist das?"
+   ],
+   "2": [
+    "Es ist ein Abend im November.",
+    "Draußen ist es schon dunkel.",
+    "Die Kinder singen Lieder.",
+    "Jedes Kind trägt ein buntes Licht an einem Stab.",
+    "Was ist das?"
+   ],
+   "3": [
+    "Am 11.",
+    "November feiern viele Kinder das Martinsfest.",
+    "Wenn es draußen dunkel wird, ziehen sie gemeinsam durch die Straßen und singen Lieder.",
+    "Jedes Kind hält einen Stab in der Hand.",
+    "Daran hängt etwas Rundes aus buntem Papier, in dem ein kleines Licht leuchtet.",
+    "Viele Kinder haben es in der Schule selbst gebastelt.",
+    "Was ist das?"
+   ]
+  }
+ },
+ {
+  "on": "Laterne",
+  "answer": "Blätter",
+  "scene": "laub",
+  "t": {
+   "1": [
+    "Sie sind gelb, rot und braun.",
+    "Sie fal·len vom Baum.",
+    "Was ist das?"
+   ],
+   "2": [
+    "Die Blätter an den Bäumen werden gelb, rot und braun.",
+    "Dann fallen sie herunter.",
+    "Sie rascheln unter deinen Füßen.",
+    "Was ist das?"
+   ],
+   "3": [
+    "Im Sommer sind sie grün und hängen hoch oben an den Ästen.",
+    "Wenn es kühler wird, färben sie sich gelb, rot und braun.",
+    "Dann löst der Wind sie von den Zweigen und sie segeln langsam zu Boden.",
+    "Wenn du durch den Park gehst, rascheln sie laut unter deinen Füßen.",
+    "Was ist das?"
+   ]
+  }
+ },
+ {
+  "on": "Blätter",
+  "answer": "Igel",
+  "scene": "garten",
+  "t": {
+   "1": [
+    "Ich ha·be vie·le Sta·cheln.",
+    "Ich schla·fe im Win·ter.",
+    "Wer bin ich?"
+   ],
+   "2": [
+    "Ich habe viele Stacheln auf dem Rücken.",
+    "Im Herbst baue ich mir ein Nest aus Laub.",
+    "Dann schlafe ich den ganzen Winter.",
+    "Wer bin ich?"
+   ],
+   "3": [
+    "Ich bin ein kleines Tier und habe auf dem Rücken viele spitze Stacheln.",
+    "Wenn ich Angst habe, rolle ich mich zu einer Kugel zusammen.",
+    "Nachts suche ich im Garten nach Käfern und Schnecken.",
+    "Im Herbst baue ich mir unter einem Laubhaufen ein warmes Nest.",
+    "Dort schlafe ich bis zum Frühling.",
+    "Wer bin ich?"
+   ]
+  }
+ }
+];
+
+// ---------- tiny SVG helpers (scene viewBox 400 x 800, sliced to cover) ----------
+const LEAF_COLS = ["#E07A1F", "#B5452B", "#E3B23C", "#C8562B", "#D99A2B"];
+const leaf = (x, y, r, c, sc = 1) =>
+  `<path transform="translate(${x} ${y}) rotate(${r}) scale(${sc})" d="M0 -14 C-12 -8 -12 8 0 16 C12 8 12 -8 0 -14Z M0 -16 L0 14" fill="${c}" stroke="#7A3A1A" stroke-width="1"/>`;
+const rnd = (seed => () => (seed = (seed * 16807) % 2147483647) / 2147483647)(7);
+const fallingLeaves = (n, area = 400) => Array.from({ length: n }, (_, i) => {
+  const x = rnd() * area, d = 7 + rnd() * 7, delay = -rnd() * 14;
+  return `<g class="fall" style="animation-duration:${d}s;animation-delay:${delay}s">${leaf(x, 0, rnd() * 360, LEAF_COLS[i % 5], 1.1)}</g>`;
+}).join("");
+const groundLeaves = (n, y0, y1) => Array.from({ length: n }, (_, i) =>
+  leaf(rnd() * 400, y0 + rnd() * (y1 - y0), rnd() * 360, LEAF_COLS[i % 5], .9 + rnd() * .5)).join("");
+const cloud = (x, y, s, c = "#fff") =>
+  `<g transform="translate(${x} ${y}) scale(${s})" fill="${c}"><ellipse cx="0" cy="0" rx="46" ry="22"/><ellipse cx="-30" cy="6" rx="30" ry="18"/><ellipse cx="34" cy="8" rx="30" ry="16"/><ellipse cx="6" cy="-14" rx="28" ry="20"/></g>`;
+const decTree = (x, y, h, crown) =>
+  `<rect x="${x - 9}" y="${y - h}" width="18" height="${h}" fill="#6B4024"/>
+   <path d="M${x} ${y - h * .7} L${x - 34} ${y - h - 10} M${x} ${y - h * .8} L${x + 30} ${y - h - 20}" stroke="#6B4024" stroke-width="8" stroke-linecap="round"/>
+   ${[[-40, -h - 20, 46], [36, -h - 30, 44], [0, -h - 56, 52], [-10, -h - 6, 40], [28, -h + 2, 34]].map(([dx, dy, r], i) =>
+     `<circle cx="${x + dx}" cy="${y + dy}" r="${r}" fill="${crown[i % crown.length]}"/>`).join("")}`;
+const fir = (x, y, h, c) =>
+  `<rect x="${x - 6}" y="${y - h * .25}" width="12" height="${h * .25}" fill="#4A2E1A"/>
+   <path d="M${x} ${y - h} L${x - h * .32} ${y - h * .45} L${x - h * .18} ${y - h * .45} L${x - h * .4} ${y - h * .2} L${x + h * .4} ${y - h * .2} L${x + h * .18} ${y - h * .45} L${x + h * .32} ${y - h * .45}Z" fill="${c}"/>`;
+const house = (x, y, w, h, col, win) =>
+  `<rect x="${x}" y="${y - h}" width="${w}" height="${h}" fill="${col}"/><path d="M${x - 8} ${y - h} L${x + w / 2} ${y - h - w * .45} L${x + w + 8} ${y - h}Z" fill="${col}"/>
+   ${win ? `<rect x="${x + w * .2}" y="${y - h * .7}" width="${w * .22}" height="${w * .22}" fill="${win}"/><rect x="${x + w * .58}" y="${y - h * .7}" width="${w * .22}" height="${w * .22}" fill="${win}"/>` : ""}`;
+
+const SCENES = {
+  baeume: () => `
+    <rect width="400" height="800" fill="#F6D9A8"/>
+    <circle cx="320" cy="150" r="60" fill="#FBE7B5"/>
+    ${decTree(70, 640, 260, ["#E07A1F", "#E3B23C", "#C8562B"])}
+    ${decTree(330, 660, 300, ["#B5452B", "#E07A1F", "#D99A2B"])}
+    ${decTree(200, 620, 170, ["#E3B23C", "#D99A2B", "#E07A1F"])}
+    <path d="M0 610 Q200 570 400 620 L400 800 L0 800Z" fill="#8C5A2E"/>
+    ${groundLeaves(40, 630, 790)}
+    ${[60, 140, 250, 330].map(x => `<g transform="translate(${x} 700)"><circle r="9" fill="#7A4B2A"/><path d="M-9 -2 Q0 -14 9 -2Z" fill="#C89B6D"/></g>`).join("")}
+    ${fallingLeaves(8)}`,
+  wind: () => `
+    <rect width="400" height="800" fill="#9FD0EE"/>
+    <g class="drift">${cloud(90, 140, 1.1)}${cloud(300, 250, .9)}${cloud(160, 380, .7)}</g>
+    ${[200, 320, 460].map((y, i) => `<path d="M${-20 + i * 30} ${y} q60 -24 120 0 t120 0" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/>`).join("")}
+    <path d="M0 600 Q140 560 400 590 L400 800 L0 800Z" fill="#D9B45A"/>
+    <path d="M0 650 Q200 620 400 660 L400 800 L0 800Z" fill="#C49A3E"/>
+    ${Array.from({ length: 30 }, (_, i) => `<path d="M${i * 14} ${700 + (i % 3) * 30} l6 -16" stroke="#A47D2C" stroke-width="3"/>`).join("")}
+    ${fallingLeaves(6)}`,
+  feld: () => `
+    <rect width="400" height="800" fill="#F7C98B"/>
+    <circle cx="90" cy="420" r="70" fill="#FBE2A0"/>
+    <path d="M0 470 Q120 430 260 460 T400 450 L400 800 L0 800Z" fill="#A5B25A"/>
+    <path d="M0 520 L400 520 L400 800 L0 800Z" fill="#8C6A3A"/>
+    ${Array.from({ length: 6 }, (_, i) => `<path d="M${-60 + i * 10} 800 L${120 + i * 50} 520" stroke="#6E5028" stroke-width="5"/>`).join("")}
+    ${Array.from({ length: 12 }, (_, i) => `<path d="M${30 + i * 32} ${560 + (i % 4) * 60} q14 -16 28 -4" fill="none" stroke="#5B7A2A" stroke-width="5" stroke-linecap="round"/>`).join("")}
+    ${house(270, 470, 70, 50, "#9A3B2A", "#F6D27A")}
+    <rect x="300" y="420" width="10" height="20" fill="#5A3A20"/>
+    ${groundLeaves(10, 600, 790)}`,
+  wald: () => `
+    <rect width="400" height="800" fill="#CFE0B8"/>
+    ${[[40, 520, 330, "#4D6B3A"], [130, 560, 400, "#3E5A30"], [260, 530, 360, "#4D6B3A"], [360, 570, 420, "#3E5A30"], [200, 600, 260, "#5E7D43"]].map(a => fir(...a)).join("")}
+    <path d="M0 580 Q200 550 400 590 L400 800 L0 800Z" fill="#6E8B3D"/>
+    <path d="M0 660 Q200 630 400 670 L400 800 L0 800Z" fill="#5A7431"/>
+    ${groundLeaves(18, 620, 790)}
+    ${Array.from({ length: 14 }, (_, i) => `<path d="M${i * 30 + 6} ${640 + (i % 3) * 40} l-4 -14 M${i * 30 + 10} ${640 + (i % 3) * 40} l4 -16" stroke="#3F5A22" stroke-width="3"/>`).join("")}
+    ${fallingLeaves(5)}`,
+  regen: () => `
+    <rect width="400" height="800" fill="#AEB8C2"/>
+    ${cloud(80, 110, 1.4, "#8D99A6")}${cloud(300, 150, 1.6, "#7F8B98")}${cloud(190, 70, 1.2, "#9AA5B0")}
+    ${house(40, 600, 150, 190, "#C77A4A", "#E8E1C8")}
+    <rect x="90" y="530" width="44" height="70" fill="#6B4024"/>
+    ${house(240, 600, 120, 130, "#B5865A", "#E8E1C8")}
+    <rect x="0" y="600" width="400" height="200" fill="#6F7A84"/>
+    ${[[80, 690, 70], [260, 740, 90], [170, 650, 40]].map(([x, y, rx]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${rx * .18}" fill="#93A3B3"/>`).join("")}
+    ${Array.from({ length: 70 }, () => { const x = rnd() * 440, y = rnd() * 800, d = .6 + rnd() * .6, del = -rnd();
+      return `<line class="drop" style="animation-duration:${d}s;animation-delay:${del}s" x1="${x}" y1="${y}" x2="${x - 6}" y2="${y + 22}" stroke="#E4EEF7" stroke-width="2.5" stroke-linecap="round"/>`; }).join("")}`,
+  nacht: () => `
+    <rect width="400" height="800" fill="#1F2A4D"/>
+    <rect y="420" width="400" height="380" fill="#26315A"/>
+    <circle cx="310" cy="120" r="44" fill="#F6E7B4"/><circle cx="292" cy="108" r="40" fill="#1F2A4D"/>
+    ${Array.from({ length: 40 }, () => `<circle class="twinkle" style="animation-delay:${-rnd() * 3}s" cx="${rnd() * 400}" cy="${rnd() * 420}" r="${1 + rnd() * 2}" fill="#FFF6D6"/>`).join("")}
+    ${house(10, 640, 90, 120, "#141B33", "#F3C35B")}${house(120, 640, 70, 160, "#141B33", "#F3C35B")}
+    ${house(210, 640, 80, 110, "#141B33", "#F3C35B")}${house(310, 640, 90, 140, "#141B33", "#F3C35B")}
+    <rect y="640" width="400" height="160" fill="#10162B"/>
+    ${[60, 150, 240, 330].map(x => `<circle cx="${x}" cy="700" r="26" fill="#F3C35B" opacity=".18"/><circle cx="${x}" cy="700" r="6" fill="#F7D57E"/>`).join("")}`,
+  laub: () => `
+    <rect width="400" height="800" fill="#F3D9B0"/>
+    ${decTree(90, 600, 280, ["#C8562B", "#E3B23C", "#E07A1F"])}
+    ${decTree(320, 620, 330, ["#E3B23C", "#B5452B", "#D99A2B"])}
+    <path d="M0 590 Q200 560 400 600 L400 800 L0 800Z" fill="#A87A45"/>
+    <path d="M40 800 Q120 650 220 690 Q320 640 400 720 L400 800Z" fill="#C8562B" opacity=".55"/>
+    ${groundLeaves(60, 620, 795)}
+    ${fallingLeaves(14)}`,
+  garten: () => `
+    <rect width="400" height="800" fill="#E9B98A"/>
+    <rect y="0" width="400" height="300" fill="#F0C996"/>
+    <circle cx="80" cy="330" r="64" fill="#F8D9A6"/>
+    ${Array.from({ length: 12 }, (_, i) => `<rect x="${i * 36}" y="430" width="22" height="160" rx="6" fill="#B07D4F"/>`).join("")}
+    <rect y="470" width="400" height="14" fill="#9A6A3F"/><rect y="540" width="400" height="14" fill="#9A6A3F"/>
+    <path d="M0 590 Q200 570 400 600 L400 800 L0 800Z" fill="#7C8F45"/>
+    <path d="M200 800 Q230 640 320 650 Q400 660 420 800Z" fill="#B5452B" opacity=".6"/>
+    ${groundLeaves(30, 620, 795)}
+    ${Array.from({ length: 22 }, () => leaf(250 + rnd() * 140, 680 + rnd() * 110, rnd() * 360, LEAF_COLS[Math.floor(rnd() * 5)], 1.3)).join("")}
+    ${fallingLeaves(7)}`,
+};
+
+const sceneSVG = (name, id) =>
+  `<svg class="scene" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <filter id="wc-${id}" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="4" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feGaussianBlur in="d" stdDeviation="0.6"/>
+      </filter>
+      <filter id="grain-${id}"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="9"/>
+        <feColorMatrix values="0 0 0 0 0.35  0 0 0 0 0.25  0 0 0 0 0.15  0 0 0 0.55 0"/></filter>
+      <filter id="bloom-${id}"><feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="2"/>
+        <feColorMatrix values="0 0 0 0 0.5  0 0 0 0 0.3  0 0 0 0 0.1  0 0 0 0.35 -0.05"/></filter>
+    </defs>
+    <g filter="url(#wc-${id})">${SCENES[name]()}</g>
+    <rect width="400" height="800" filter="url(#bloom-${id})" style="mix-blend-mode:multiply"/>
+    <rect width="400" height="800" filter="url(#grain-${id})" opacity=".35" style="mix-blend-mode:multiply"/>
+  </svg>`;
+
+const lens = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l6 6"/></svg>`;
+
+const acorn = `<svg viewBox="0 0 16 22" aria-hidden="true"><path d="M3 9 Q4 18 8 21 Q12 18 13 9Z" fill="#E8C58C" stroke="#5A3A1E" stroke-width="1"/><path d="M1.5 9.5 Q2 4 8 3.5 Q14 4 14.5 9.5 Q8 11 1.5 9.5Z" fill="#8C6A42" stroke="#5A3A1E" stroke-width="1"/><path d="M8 3.5 Q8.5 1.5 10 1" stroke="#5A3A1E" stroke-width="1.4" fill="none"/></svg>`;
+const badge = lv => `<span class="badge" style="--lv:var(--lv${lv})">Stufe ${lv} ${acorn.repeat(lv)}</span>`;
+
+// Stufe 1: syllables marked with '·' alternate blue/red across the whole text
+function syllables(sentences) {
+  let n = 0;
+  return sentences.map(sen => sen.split(" ").map(word => {
+    const m = word.match(/^(.*?)([.,?!]*)$/);
+    const parts = m[1].split("·").map(p => `<span class="${n++ % 2 ? "syl-b" : "syl-a"}">${p}</span>`).join("");
+    return parts + m[2];
+  }).join(" "));
+}
+
+function renderCard(i, lv) {
+  const c = CARDS[i];
+  const raw = c.t[lv];
+  const lines = lv === 1 ? syllables(raw) : raw;
+  app.innerHTML = `<main class="card lv${lv}">${sceneSVG(c.scene, "s")}
+    <article class="panel" style="--lv-soft:var(--lv${lv}-soft)">
+      <div class="head"><span class="chip">Herbst-Lesespur</span>${badge(lv)}</div>
+      <div class="text">${lines.map((t, j) => `<p class="${j === lines.length - 1 ? "q" : ""}">${t}</p>`).join("")}</div>
+      <div class="hint">${lens}<span>Suche die Karte mit dem passenden Bild!</span></div>
+    </article></main>`;
+}
+
+function renderOverview() {
+  app.innerHTML = `<div class="overview">
+    <h1>Herbst-Lesekarten</h1>
+    <p>Das sind die Leseseiten der Herbst-Lesespur in drei Stufen. Die Kinder kommen über die QR-Codes auf den Bildkarten direkt zu ihrer Seite. In Stufe 1 sind die Silben farbig. Tippe auf eine Karte, um sie groß anzusehen.</p>
+    ${[1, 2, 3].map(lv => `<h2 class="level">${badge(lv)}</h2>
+    <div class="grid">${CARDS.map((c, i) => `<a class="thumb" href="#s${lv}-${i + 1}">${sceneSVG(c.scene, `o${lv}${i}`)}
+      <span class="lbl"><b>QR auf Karte „${c.on}“</b>Lösung: ${c.answer}</span></a>`).join("")}</div>`).join("")}</div>`;
+}
+
+function route() {
+  const h = location.hash;
+  let m = /^#s([1-3])-([1-8])$/.exec(h);
+  if (m) renderCard(+m[2] - 1, +m[1]);
+  else if ((m = /^#text-([1-8])$/.exec(h))) renderCard(+m[1] - 1, 2);
+  else renderOverview();
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
+
+</body>
+</html>
