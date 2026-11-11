@@ -17,5 +17,5 @@ Lösungswort: KASTANIE · Extra-Wort (Stufe 3): NEBELTAG
 Vierwöchiges Leseband mit dreifach differenzierten Texten (★ / ★★ / ★★★) und den Methoden Tandem-, Blitz-, Würfel-, Chor-, Theater- und Hörbuchlesen.
 
 - **Woche 1 · Lottas Laterne (Kinderseiten, A4):** [`Leseband/Leseband-Woche-1-Lottas-Laterne.pdf`](Leseband/Leseband-Woche-1-Lottas-Laterne.pdf) – Direktlink: https://pinguin-glitch896.github.io/Lesespur-Herbst-2.Klasse/Leseband/Leseband-Woche-1-Lottas-Laterne.pdf
-  - 3 Lesetexte (★, ★★, ★★★) mit QR-Codes zu den Hörtexten
+  - 3 Lesetexte (★, ★★, ★★★) mit QR-Codes zu den Hörtexten – in der PDF auch per Antippen/Klick zu öffnen
   - Blitzlesen, Würfellesen, Theaterlesen, Leseverständnis
