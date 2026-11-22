@@ -22,3 +22,10 @@ Vierwöchiges Leseband mit dreifach differenzierten Texten (★ / ★★ / ★�
 - **Woche 2 · Ida, der Igel (Kinderseiten, A4):** [`Leseband/Leseband-Woche-2-Ida-der-Igel.pdf`](Leseband/Leseband-Woche-2-Ida-der-Igel.pdf) – Direktlink: https://pinguin-glitch896.github.io/Lesespur-Herbst-2.Klasse/Leseband/Leseband-Woche-2-Ida-der-Igel.pdf
   - 3 Lesetexte (★, ★★, ★★★) mit QR-Codes zu den Hörtexten – in der PDF auch per Antippen/Klick zu öffnen
   - Blitzlesen, Würfellesen, Theaterlesen, Leseverständnis
+
+## Leseverständnis digital (iPad)
+
+Die Kinder geben ihren Namen ein, wählen ihren Stern-Text, lösen die Aufgaben und lassen sie prüfen (zwei Versuche, danach werden die Lösungen gezeigt). Am Ende gibt es einen Ergebnis-Bildschirm, der sich per „Ergebnis senden“ (AirDrop, Mail …) weitergeben lässt. Keine Anmeldung nötig, es werden keine Daten gespeichert.
+
+- **Woche 1 · Lottas Laterne:** https://pinguin-glitch896.github.io/Lesespur-Herbst-2.Klasse/Leseband/verstehen/woche-1.html
+- **Woche 2 · Ida, der Igel:** https://pinguin-glitch896.github.io/Lesespur-Herbst-2.Klasse/Leseband/verstehen/woche-2.html
