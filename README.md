@@ -18,10 +18,10 @@ Vierwöchiges Leseband mit dreifach differenzierten Texten (★ / ★★ / ★�
 
 - **Woche 1 · Lottas Laterne (Kinderseiten, A4):** [`Leseband/Leseband-Woche-1-Lottas-Laterne.pdf`](Leseband/Leseband-Woche-1-Lottas-Laterne.pdf) – Direktlink: https://pinguin-glitch896.github.io/Lesespur-Herbst-2.Klasse/Leseband/Leseband-Woche-1-Lottas-Laterne.pdf
   - 3 Lesetexte (★, ★★, ★★★) mit QR-Codes zu den Hörtexten – in der PDF auch per Antippen/Klick zu öffnen
-  - Blitzlesen, Würfellesen, Theaterlesen, Leseverständnis
+  - Blitzlesen, Würfellesen, Theaterlesen (Leseverständnis digital, siehe unten)
 - **Woche 2 · Ida, der Igel (Kinderseiten, A4):** [`Leseband/Leseband-Woche-2-Ida-der-Igel.pdf`](Leseband/Leseband-Woche-2-Ida-der-Igel.pdf) – Direktlink: https://pinguin-glitch896.github.io/Lesespur-Herbst-2.Klasse/Leseband/Leseband-Woche-2-Ida-der-Igel.pdf
   - 3 Lesetexte (★, ★★, ★★★) mit QR-Codes zu den Hörtexten – in der PDF auch per Antippen/Klick zu öffnen
-  - Blitzlesen, Würfellesen, Theaterlesen, Leseverständnis
+  - Blitzlesen, Würfellesen, Theaterlesen (Leseverständnis digital, siehe unten)
 
 ## Leseverständnis digital (iPad)
 
